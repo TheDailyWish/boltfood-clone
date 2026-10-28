@@ -149,13 +149,51 @@ body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.45 var(--fon
 .opt input:checked{border:8px solid var(--primary)}
 
 /* ---------- Меню та налаштування ---------- */
-.who{display:flex;align-items:center;gap:16px;margin:8px 0 18px}
+.who{display:flex;align-items:center;gap:16px;width:100%;margin:8px 0 18px;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
 .who b{display:block;font-size:22px;font-weight:800;letter-spacing:-.01em}
-.who span:not(.avatar){color:var(--muted)}
 .avatar{display:grid;place-items:center;flex:none;width:64px;height:64px;border-radius:50%;background:var(--primary);font-size:30px}
 .mrow{display:flex;align-items:center;gap:16px;width:100%;padding:18px 0;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);font:500 18px var(--font);text-align:left;text-decoration:none;cursor:pointer}
 .mrow span:nth-child(2){flex:1}.mrow svg:last-child{color:var(--muted)}
 .opt .grow{flex:1}
+.wtxt{flex:1;min-width:0}
+.who small{display:block;color:var(--muted);font-size:16px}
+.pform{display:grid;gap:12px;margin:8px 0 18px}
+.pform label{display:grid;gap:4px;color:var(--muted);font-size:14px}
+.pform input{padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:500 17px var(--font)}
+.pbtns{display:flex;gap:10px}
+.pbtns .btn{flex:1;padding:14px}
+.pcircles{display:flex;gap:12px}
+.pcircle{width:52px;height:52px;border:2px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);font:700 17px var(--font);cursor:pointer}
+.pcircle[aria-pressed="true"]{border-color:var(--primary);background:var(--primary);color:var(--on-primary)}
+.pcircle.add{border-style:dashed;color:var(--muted);font-size:26px;line-height:1}
+.pcircle.add[aria-pressed="true"]{color:var(--on-primary)}
+.pdel{align-self:center;padding:8px;border:0;background:none;color:var(--danger);font:600 15px var(--font);cursor:pointer}
+/* ---------- Доставки, готівка, оплата ---------- */
+a.btn{display:block;text-align:center;text-decoration:none}
+.bar.col{flex-direction:column}
+.bar.col .notice{margin:0}
+.sums{display:grid;gap:12px;margin-bottom:12px}
+.sumcard{display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 16px;border:0;border-radius:16px;background:var(--line);color:var(--ink);font:inherit;text-align:left;text-decoration:none}
+.sumcard small{display:block;color:var(--muted);font-size:15px}
+.sumcard b{font-size:20px;font-weight:700}
+.day{margin-top:24px}
+.dayhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.dayhead h2,.dayhead b{margin:0;font-size:21px;font-weight:700}
+.cnt{margin:2px 0 4px;text-align:right;color:var(--muted);font-size:15px}
+.ords{list-style:none;margin:0;padding:0}
+.ord{display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.ord small{display:block;color:var(--muted);font-size:14px}
+.ord>span{font-weight:700;white-space:nowrap}
+.cashbox{display:grid;place-content:center;gap:16px;min-height:55vh;text-align:center}
+.cashbox p{margin:0;color:var(--muted)}
+.cashin{display:flex;align-items:baseline;justify-content:center;gap:6px;font-size:48px;font-weight:800}
+.cashin input{width:6ch;padding:0;border:0;border-bottom:2px solid var(--line);background:none;color:var(--ink);font:inherit;text-align:right}
+.big{margin:8px 0 18px;font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.info{margin:0 0 14px;padding:14px 16px;border-radius:14px;background:var(--go-bg);color:var(--go-fg)}
+.days{list-style:none;margin:0;padding:0}
+.dayrow{display:grid;grid-template-columns:1fr 84px 104px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.dayrow.head{color:var(--muted);font-size:13px}
+.dayrow input{width:100%;padding:10px 8px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font:500 16px var(--font);text-align:right}
 .sheet{position:fixed;top:0;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;overflow-y:auto;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(24px + env(safe-area-inset-bottom,0px));background:var(--bg)}
 .sheet.rise{animation:rise .32s cubic-bezier(.2,.8,.2,1)}
 @keyframes rise{from{transform:translateY(100%)}to{transform:none}}
@@ -166,6 +204,50 @@ body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.45 var(--fon
 .screen{pointer-events:none}.screen>*{pointer-events:auto}
 .over{pointer-events:none}.over>*{pointer-events:auto}
 .me{width:22px;height:22px;border:4px solid #fff;border-radius:50%;background:var(--primary);box-shadow:0 0 0 10px var(--halo)}
+
+
+/* ---------- Замовлення на карті ---------- */
+.over.top{top:calc(84px + env(safe-area-inset-top,0px));bottom:auto;justify-content:flex-end}
+.decline{position:absolute;top:calc(16px + env(safe-area-inset-top,0px));left:84px;right:16px;height:52px;border:0;border-radius:99px;background:var(--surface);color:var(--danger);font:700 18px var(--font);box-shadow:0 2px 10px rgba(0,0,0,.18);cursor:pointer}
+.ocard,.osheet,.isheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:22px 22px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,.18)}
+.ocard{display:grid;gap:12px;padding:18px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.orow{display:flex;gap:14px;align-items:flex-start}
+.orow b{display:block;font-size:19px}.orow span{display:block}.orow small,.orow2{color:var(--muted)}
+.oi{width:28px;text-align:center;font-size:22px}
+.osheet{display:flex;flex-direction:column;max-height:88%;padding:0 16px calc(12px + env(safe-area-inset-bottom,0px))}
+.grab{align-self:center;width:60px;height:24px;padding:0;border:0;background:none;cursor:pointer}
+.grab::after{content:"";display:block;width:44px;height:5px;margin:10px auto 0;border-radius:3px;background:var(--line)}
+.osum{display:grid;gap:6px;padding-bottom:10px}
+.osum b{font-size:19px}.osum>span{color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip2{padding:6px 12px;border-radius:10px;background:var(--line);color:var(--ink);font-size:15px}
+.chip2 b{font-size:15px}
+.chip2.ok{background:var(--done-bg);color:var(--done-fg)}
+.odet{max-height:0;overflow:hidden;transition:max-height .3s}
+.exp .odet{max-height:55vh;overflow:auto}
+.blk{display:grid;gap:8px;padding:12px 0;border-top:1px solid var(--line)}
+.orow2{display:flex;justify-content:space-between;align-items:center}
+.lnk{display:inline-flex;align-items:center;gap:4px;padding:6px 0;border:0;background:none;color:var(--muted);font:500 16px var(--font);cursor:pointer}
+.lnk.call{color:var(--primary);font-weight:700}
+.hcard{display:grid;gap:4px;padding:14px 0;border-top:1px solid var(--line)}
+.lnk2{display:flex;justify-content:space-between;align-items:center;width:100%;padding:10px 0;border:0;background:none;color:var(--ink);font:500 17px var(--font);cursor:pointer}
+.info2{margin:0}.info2 dt{margin-top:10px;color:var(--muted);font-size:14px}.info2 dd{margin:0;font-size:17px}
+.calls{display:flex;gap:16px;padding:14px 0}
+.calls button{display:grid;gap:4px;justify-items:center;border:0;background:none;color:var(--ink);font:500 14px var(--font);cursor:pointer}
+.calls span{display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--line);font-size:22px}
+.ofoot{padding-top:8px}
+.wait{display:flex;flex-direction:column;align-items:center;gap:8px;margin:6px 0 4px;text-align:center}
+.slide{position:relative;display:grid;place-items:center;height:64px;border-radius:99px;background:var(--primary);color:var(--on-primary);overflow:hidden;touch-action:none}
+.knob{position:absolute;left:6px;top:6px;display:grid;place-items:center;width:52px;height:52px;border:0;border-radius:50%;background:#fff;color:var(--primary);cursor:grab;touch-action:none}
+.stxt{display:grid;text-align:center;pointer-events:none}.stxt b{font-size:19px}.stxt small{font-size:13px;opacity:.85}
+.isheet{padding:20px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.ihead{display:flex;justify-content:space-between;align-items:center}.ihead h2{margin:0;font-size:24px}
+.ilist{list-style:none;margin:8px 0 16px;padding:0}.ilist li{padding:16px 0;border-bottom:1px solid var(--line);font-size:18px}
+.bigd{position:fixed;top:0;bottom:0;left:0;right:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0E1110;color:#EDEFEE}
+.bigd b{color:#38B27A;font-size:20vh;line-height:1.1}
+.bigd span{font-size:32vh;font-weight:800;line-height:1.05;letter-spacing:.04em}
+.pin{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:#fff;font-size:20px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.pin.venue{background:#6B4EFF}.pin.client{background:#1E8F5A}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -206,7 +288,17 @@ const state = {
   online: false,
   vehicle: 'foot',
   draft: null,
-  profile: { name: 'Тарас Мельник', phone: '+380 50 000 00 00' },
+  profiles: [{ first: 'Тарас', last: 'Мельник', phone: '+380 50 000 00 00' }], // до 3 профілів
+  active: 0,
+  profile: null, // активний профіль (посилання на елемент profiles)
+  editing: false,
+  adding: false,
+  finance: { cash: 735.4, days: {}, done: [] }, // готівка, правки по днях і виконані замовлення (localStorage)
+  payMethod: null,
+  live: null, // поточне замовлення
+  expanded: false,
+  itemsOpen: false,
+  landscape: false,
   location: null, // null — реальна геолокація, інакше id пресету
   pos: null,
   acc: null,
@@ -249,7 +341,7 @@ function reject(id) {
   location.hash = '#/orders';
 }
 function askOffline() {
-  if (state.orders.some(inProgress)) return toast('Завершіть поточне замовлення, щоб вийти офлайн');
+  if (state.live && state.live.phase !== 'offer') return toast('Завершіть поточне замовлення, щоб вийти офлайн');
   state.dialog = true;
 }
 
@@ -415,6 +507,32 @@ function startWatch() {
   }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 });
 }
 
+// Маршрут замовлення на карті Mapbox: лінія курʼєр → заклад → клієнт і дві мітки
+const hereLL = () => here();
+let routeMarkers = [];
+const pin = (cls, ico) => { const el = document.createElement('div'); el.className = 'pin ' + cls; el.textContent = ico; return el; };
+function syncRoute() {
+  if (!map) return;
+  if (!map.isStyleLoaded()) { map.once('idle', syncRoute); return; }
+  routeMarkers.forEach(m => m.remove());
+  routeMarkers = [];
+  const L = state.live;
+  const toClient = L && (L.phase === 'to_client' || L.phase === 'at_client');
+  const pts = !L ? [] : toClient ? [L.venue.at, L.dest.at] : [hereLL(), L.venue.at, L.dest.at];
+  const data = { type: 'FeatureCollection', features: pts.length ? [{ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: pts } }] : [] };
+  if (map.getSource('route')) map.getSource('route').setData(data);
+  else {
+    map.addSource('route', { type: 'geojson', data });
+    map.addLayer({ id: 'route', type: 'line', source: 'route', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#2B44F0', 'line-width': 4 } });
+  }
+  if (!L) return;
+  if (!toClient) routeMarkers.push(new mapboxgl.Marker({ element: pin('venue', '🍴') }).setLngLat(L.venue.at).addTo(map));
+  routeMarkers.push(new mapboxgl.Marker({ element: pin('client', '👤') }).setLngLat(L.dest.at).addTo(map));
+  const b = new mapboxgl.LngLatBounds();
+  pts.forEach(p => b.extend(p));
+  map.fitBounds(b, { padding: { top: 120, bottom: 340, left: 60, right: 60 }, maxZoom: 16, duration: 700 });
+}
+
 function viewHome() {
   const burger = svg('<path d="M4 7h16M4 12h16M4 17h16"/>');
   const target = svg('<circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="12" r="8"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3"/>');
@@ -427,9 +545,9 @@ function viewHome() {
     : '';
   return '<div class="screen">' +
     '<a class="fab menu" href="#/menu" aria-label="Відкрити меню">' + burger + '</a>' +
-    '<div class="over">' + (state.online ? '<div class="status"><i class="spin"></i>Пошук замовлень</div>' : '<span></span>') +
+    '<div class="over' + (state.live ? ' top' : '') + '">' + (state.online && !state.live ? '<div class="status"><i class="spin"></i>Пошук замовлень</div>' : '<span></span>') +
       '<button class="fab' + (isCentered() ? ' on' : '') + '" data-act="locate" aria-label="Показати моє місцезнаходження">' + target + '</button></div>' +
-    '<div class="bottom">' + main + '</div>' + dialog + '</div>';
+    (state.live ? liveUI() : '<div class="bottom">' + main + '</div>') + dialog + '</div>' + bigDigits();
 }
 
 function viewSetup() {
@@ -469,26 +587,89 @@ const MENU = [
   { id: 'about', label: 'Про нас', d: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>' }
 ];
 
+// Профілі: до трьох заготовлених наборів «ім’я, прізвище, телефон». Активний профіль — state.profile
+const selectProfile = i => { state.active = i; state.profile = state.profiles[i]; };
+const PROFILE_KEY = 'fastcourier.profiles';
+const cleanProfile = q => ({ first: String(q.first || ''), last: String(q.last || ''), phone: String(q.phone || '') });
+// зберігаємо в localStorage (у try/catch: сховище може бути недоступне)
+function loadProfile() {
+  selectProfile(0);
+  try {
+    const d = JSON.parse(localStorage.getItem(PROFILE_KEY));
+    if (d && Array.isArray(d.list) && d.list.length) {
+      state.profiles = d.list.slice(0, 3).map(cleanProfile);
+      selectProfile(Math.min(Math.max(d.active | 0, 0), state.profiles.length - 1));
+    } else {
+      const old = JSON.parse(localStorage.getItem('fastcourier.profile')); // профіль зі старої версії
+      if (old && old.first) Object.assign(state.profile, cleanProfile(old));
+    }
+  } catch (e) { /* сховище недоступне */ }
+}
+function saveProfile() {
+  try { localStorage.setItem(PROFILE_KEY, JSON.stringify({ list: state.profiles, active: state.active })); } catch (e) { /* ігноруємо */ }
+}
+// беремо значення з полів форми; false, якщо дані некоректні
+function submitProfile() {
+  const val = n => document.querySelector('.pform [name="' + n + '"]').value.trim();
+  const first = val('first'), last = val('last'), phone = val('phone');
+  if (!first || !last) { toast('Вкажіть ім’я та прізвище'); return false; }
+  if (phone.replace(/\D/g, '').length < 10) { toast('Вкажіть коректний номер телефону'); return false; }
+  if (state.adding && state.profiles.length >= 3) { toast('Можна мати до 3 профілів'); return false; }
+  if (state.adding) {
+    state.profiles.push({ first, last, phone });
+    selectProfile(state.profiles.length - 1);
+  } else {
+    Object.assign(state.profile, { first, last, phone });
+  }
+  state.editing = false;
+  state.adding = false;
+  saveProfile();
+  toast('Профіль збережено');
+  return true;
+}
+function deleteProfile() {
+  if (state.profiles.length < 2) return;
+  state.profiles.splice(state.active, 1);
+  selectProfile(Math.max(0, state.active - 1));
+  saveProfile();
+  toast('Профіль видалено');
+}
+
 function viewMenu(animate) {
   const v = VEHICLES.find(x => x.id === state.vehicle);
   const rows = MENU.map(m => {
     const inner = '<span class="mi">' + svg(m.d) + '</span><span>' + m.label + '</span>' + svg('<path d="M9 5l7 7-7 7"/>');
-    return '<li>' + (m.id === 'settings'
-      ? '<a class="mrow" href="#/settings">' + inner + '</a>'
+    return '<li>' + (LINKS[m.id]
+      ? '<a class="mrow" href="' + LINKS[m.id] + '">' + inner + '</a>'
       : '<button class="mrow" data-act="soon">' + inner + '</button>') + '</li>';
   }).join('');
+  const adding = state.adding;
+  const p = adding ? { first: '', last: '', phone: '' } : state.profile;
+  const initials = q => ((q.first[0] || '') + (q.last[0] || '')).toUpperCase();
+  const circles = state.profiles.map((q, i) =>
+    '<button class="pcircle" data-act="pick" data-id="' + i + '" aria-pressed="' + (!adding && i === state.active) + '" aria-label="Профіль ' + esc(q.first + ' ' + q.last) + '">' + esc(initials(q)) + '</button>').join('') +
+    (state.profiles.length < 3 ? '<button class="pcircle add" data-act="add-profile" aria-pressed="' + adding + '" aria-label="Додати профіль">+</button>' : '');
+  const who = state.editing
+    ? '<div class="pform"><div class="pcircles">' + circles + '</div>' +
+      '<label>Ім’я<input name="first" value="' + esc(p.first) + '" maxlength="30" autocomplete="given-name"></label>' +
+      '<label>Прізвище<input name="last" value="' + esc(p.last) + '" maxlength="30" autocomplete="family-name"></label>' +
+      '<label>Телефон<input name="phone" type="tel" inputmode="tel" value="' + esc(p.phone) + '" maxlength="20" autocomplete="tel"></label>' +
+      '<div class="pbtns"><button class="btn ghost" data-act="edit-cancel">Скасувати</button><button class="btn" data-act="edit-save">Зберегти</button></div>' +
+      (!adding && state.profiles.length > 1 ? '<button class="pdel" data-act="del-profile">Видалити профіль</button>' : '') + '</div>'
+    : '<button class="who" data-act="edit-profile" aria-label="Редагувати профіль"><span class="avatar" aria-hidden="true">' + v.ico + '</span>' +
+      '<span class="wtxt"><b>' + esc(p.first + ' ' + p.last) + '</b><small>' + esc(p.phone) + '</small></span></button>';
   return '<div class="sheet' + (animate ? ' rise' : '') + '" role="dialog" aria-modal="true" aria-label="Головне меню"><a class="tbb" href="#/" aria-label="Закрити">' + svg('<path d="M6 6l12 12M18 6 6 18"/>') + '</a>' +
-    '<div class="who"><span class="avatar" aria-hidden="true">' + v.ico + '</span><div><b>' + esc(state.profile.name) + '</b><span>' + esc(state.profile.phone) + '</span></div></div>' +
+    who +
     '<ul class="checks">' + rows + '</ul></div>';
 }
 
-// Пресети геолокації: приблизні точки відносно центру міста (заміни на координати потрібних закладів)
-const CITY = [28.4682, 49.2331];
-const km = (dx, dy) => [CITY[0] + dx / (111.32 * Math.cos(CITY[1] * Math.PI / 180)), CITY[1] + dy / 110.57];
+// Пресети геолокації: реальні координати пунктів у порядку [довгота, широта]
+const CITY = [28.470812, 49.232389]; // Центр: запасна точка, поки немає реальної геолокації
 const LOCATIONS = [
-  { id: 'kyivska', name: 'Київська', at: km(-2.0, 2.2) },
-  { id: 'center', name: 'Центр', at: km(0, 0) },
-  { id: 'keltsia', name: 'Келецька', at: km(2.5, -2.8) }
+  { id: 'kyivska', name: 'Київська', at: [28.480420, 49.237489] },
+  { id: 'center', name: 'Центр', at: [28.470812, 49.232389] },
+  { id: 'keltsia', name: 'Келецька', at: [28.412670, 49.226340] },
+  { id: 'khmelnytske', name: 'Хмельницьке', at: [28.404640, 49.237940] }
 ];
 // де зараз користувач: пресет, реальна позиція або центр міста
 const here = () => { const l = LOCATIONS.find(x => x.id === state.location); return l ? l.at : state.pos || CITY; };
@@ -496,45 +677,359 @@ const here = () => { const l = LOCATIONS.find(x => x.id === state.location); ret
 function viewSettings() {
   const opts = LOCATIONS.map(l =>
     '<li><label class="opt"><span class="grow">' + l.name + '</span><input type="radio" name="location" value="' + l.id + '"' + (state.location === l.id ? ' checked' : '') + '></label></li>').join('');
-  return topbar('#/menu', 'Назад', ARROW, 'Макдональдс') + '<ul class="opts">' + opts + '</ul>';
+  const input = (d, field, attrs, value) =>
+    '<input type="number" ' + attrs + ' value="' + value + '" data-day="' + d.key + '" data-field="' + field + '" aria-label="' + (field === 'count' ? 'Замовлень' : 'Заробіток') + ', ' + fmtShort(d.date) + '">';
+  const rows = buildDays().map(d =>
+    '<li class="dayrow"><span>' + fmtShort(d.date) + '</span>' +
+    input(d, 'count', 'inputmode="numeric" min="0" max="30" step="1"', d.count) +
+    input(d, 'total', 'inputmode="decimal" min="0" max="99999" step="0.01"', d.total) + '</li>').join('');
+  return topbar('#/menu', 'Назад', ARROW, 'Макдональдс') + '<ul class="opts">' + opts + '</ul>' +
+    '<h2 class="sec">Заробіток за днями</h2><ul class="days"><li class="dayrow head"><span></span><span>Замовлень</span><span>Заробіток, ₴</span></li>' + rows + '</ul>';
 }
 
 // попередній маршрут: меню випливає знизу лише при відкритті з карти, а не при поверненні з налаштувань
 let prevHash = null;
 
+/* ---------- Доставки, готівка, борг (демонстраційні дані) ---------- */
+const LINKS = { deliveries: '#/deliveries', settings: '#/settings' };
+const fmtMoney2 = n => new Intl.NumberFormat('uk-UA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n) + ' ₴';
+const fmtDate = d => d.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' }).replace(/\s*р\.$/, '') + ' р.';
+const fmtShort = d => d.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long' });
+const pad2 = n => String(n).padStart(2, '0');
+const fmtDM = d => pad2(d.getDate()) + '.' + pad2(d.getMonth() + 1);
+const fmtHM = m => pad2(Math.floor(m / 60)) + ':' + pad2(m % 60);
+const parseMoney = s => {
+  const n = parseFloat(String(s).replace(/\s/g, '').replace(',', '.'));
+  return Number.isFinite(n) && n >= 0 && n <= 99999 ? Math.round(n * 100) / 100 : null;
+};
+// детермінований генератор випадкових чисел: одна й та сама дата дає ті самі замовлення
+const rng = seed => () => {
+  seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+  let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+  t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+  return ((t ^ t >>> 14) >>> 0) / 4294967296;
+};
+// вигадані заклади разом з адресою в одному списку; щоб додати чи замінити заклад, достатньо змінити цей масив
+const VENUES = [
+  'Пекарня «Борошно», вул. Садова, 14',
+  'Суші Норі, просп. Миру, 31',
+  'Бургерна «Гриль 24», вул. Шкільна, 3',
+  'Кав’ярня «Зерно», вул. Нова, 7',
+  'Піца Б’янка, вул. Центральна, 2',
+  'Локшина Хару, просп. Миру, 56',
+  'Шаурма «Східна», вул. Лісова, 18',
+  'Вареники «Хата», вул. Річкова, 22',
+  'Салати «Зелений двір», вул. Садова, 40',
+  'Млинці «Золота пательня», вул. Нова, 21'
+];
+const DAY_OFFSETS = [0, 1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 15]; // 12 днів із природними пропусками
+const dayKey = d => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+
+const FINANCE_KEY = 'fastcourier.finance';
+function loadFinance() {
+  try {
+    const d = JSON.parse(localStorage.getItem(FINANCE_KEY));
+    if (d && typeof d.cash === 'number') state.finance.cash = d.cash;
+    if (d && d.days && typeof d.days === 'object') state.finance.days = d.days;
+    if (d && Array.isArray(d.done)) state.finance.done = d.done.filter(o => o && typeof o.amount === 'number');
+  } catch (e) { /* сховище недоступне */ }
+}
+function saveFinance() {
+  try { localStorage.setItem(FINANCE_KEY, JSON.stringify(state.finance)); } catch (e) { /* ігноруємо */ }
+}
+
+// дні історії: кількість замовлень і сума за замовчуванням генеруються, правки з «Налаштувань» накладаються зверху
+function buildDays() {
+  const base = new Date();
+  base.setHours(12, 0, 0, 0);
+  return DAY_OFFSETS.map(off => {
+    const date = new Date(base);
+    date.setDate(base.getDate() - off);
+    const key = dayKey(date), seed = Number(key.replace(/-/g, ''));
+    const r = rng(seed);
+    const count0 = 2 + Math.floor(r() * 8);
+    const total0 = Math.round(count0 * (62 + r() * 40) * 100) / 100;
+    const ov = state.finance.days[key] || {};
+    return { off, key, date, seed, count: ov.count ?? count0, total: ov.total ?? total0 };
+  });
+}
+// замовлення дня: суми підганяються так, щоб у сумі дати рівно total
+function dayOrders(day) {
+  const r = rng(day.seed * 7 + 1), n = day.count;
+  const w = Array.from({ length: n }, () => 0.6 + r());
+  const sw = w.reduce((a, b) => a + b, 0);
+  const cents = Math.round(day.total * 100);
+  let left = cents;
+  const amounts = w.map((x, i) => {
+    const c = i === n - 1 ? left : Math.round(cents * x / sw);
+    left -= c;
+    return c / 100;
+  });
+  // час замовлень: з 12:00 до 23:00, рівномірно з «живим» розкидом і проміжком не менше 12 хвилин
+  const now = new Date(), start = 12 * 60, limit = 23 * 60 - 1;
+  const end = day.off === 0 ? Math.min(Math.max(now.getHours() * 60 + now.getMinutes(), start + 12 * n), limit) : limit;
+  const slot = (end - start) / Math.max(n, 1);
+  const asc = [];
+  for (let i = 0; i < n; i++) {
+    const t = Math.round(start + slot * (i + 0.15 + r() * 0.7));
+    asc.push(Math.min(end, Math.max(t, i ? asc[i - 1] + 12 : start)));
+  }
+  const times = asc.reverse();
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
+  return amounts.map((amount, i) => ({
+    venue: VENUES[Math.floor(r() * VENUES.length)],
+    amount, minutes: times[i],
+    code: '#' + Array.from({ length: 5 }, () => chars[Math.floor(r() * chars.length)]).join('')
+  }));
+}
+
+function saveCash() {
+  const v = parseMoney(document.getElementById('cash').value);
+  if (v === null) { toast('Вкажіть коректну суму'); return false; }
+  state.finance.cash = v;
+  saveFinance();
+  location.hash = '#/deliveries';
+  toast('Суму збережено');
+  return true;
+}
+function payDebt() {
+  if (!state.payMethod || state.finance.cash <= 0) return;
+  state.finance.cash = 0;
+  saveFinance();
+  location.hash = '#/deliveries';
+  toast('Оплату прийнято');
+}
+
+function viewDeliveries() {
+  const cash = state.finance.cash;
+  const days = buildDays().map(d => {
+    const real = state.finance.done
+      .filter(o => dayKey(new Date(o.ts)) === d.key)
+      .map(o => { const t = new Date(o.ts); return { venue: o.venue, amount: o.amount, code: o.code, minutes: t.getHours() * 60 + t.getMinutes() }; })
+      .sort((a, b) => b.minutes - a.minutes);
+    const orders = real.concat(dayOrders(d)); // виконані в застосунку замовлення стоять першими
+    const rows = orders.map(o =>
+      '<li class="ord"><div>' + esc(o.venue) + '<small>' + fmtDM(d.date) + ', ' + fmtHM(o.minutes) + ', ' + o.code + '</small></div><span>' + fmtMoney2(o.amount) + '</span></li>').join('');
+    const total = (d.count ? d.total : 0) + real.reduce((sum, o) => sum + o.amount, 0);
+    return '<section class="day"><div class="dayhead"><h2>' + fmtDate(d.date) + '</h2><b>' + fmtMoney2(total) + '</b></div>' +
+      '<p class="cnt">Доставок: ' + orders.length + '</p><ul class="ords">' + rows + '</ul></section>';
+  }).join('');
+  return topbar('#/menu', 'Назад', ARROW, 'Всі доставки') +
+    '<div class="sums"><div class="sumcard"><span><small>Баланс</small><b>' + (cash > 0 ? '-' : '') + fmtMoney2(cash) + '</b></span></div>' +
+    '<a class="sumcard" href="#/cash"><span><small>Готівка</small><b>' + fmtMoney2(cash) + '</b></span>' + svg('<path d="M9 5l7 7-7 7"/>') + '</a></div>' +
+    (cash > 0 ? '<a class="btn round danger" href="#/pay">Сплатити борг</a>' : '<button class="btn round danger" disabled>Сплатити борг</button>') +
+    days;
+}
+
+function viewCash() {
+  return topbar('#/deliveries', 'Назад', ARROW, 'Готівка') +
+    '<div class="cashbox"><p>Вкажіть суму готівки, яка зараз у вас</p><label class="cashin"><input id="cash" inputmode="decimal" aria-label="Сума готівки" value="' + String(state.finance.cash).replace('.', ',') + '"><span>₴</span></label></div>' +
+    '<div class="bar col"><p class="notice">Змінюйте цю суму лише за потреби: від неї залежить ваш баланс.</p><button class="btn round" data-act="cash-done">Готово</button></div>';
+}
+
+function viewPay() {
+  const amount = state.finance.cash;
+  const method = (id, ico, label) =>
+    '<li><label class="opt"><span class="ico">' + ico + '</span><span>' + label + '</span><input type="radio" name="pay" value="' + id + '"' + (state.payMethod === id ? ' checked' : '') + '></label></li>';
+  return '<a class="tbb" href="#/deliveries" aria-label="Закрити">' + svg('<path d="M6 6l12 12M18 6 6 18"/>') + '</a>' +
+    '<h1 class="big">Оберіть спосіб оплати</h1>' +
+    '<p class="info">Платіж може відобразитися на балансі протягом 2 днів.</p>' +
+    '<ul class="opts">' + method('terminal', '💳', 'Термінал FastPay') + method('partner', '🏪', 'Каса партнера') +
+    '<li><button class="opt" data-act="add-card"><span class="ico">+</span><span>Додати нову картку</span>' + svg('<path d="M9 5l7 7-7 7"/>') + '</button></li></ul>' +
+    '<div class="bar"><button class="btn round" data-act="pay-now"' + (!state.payMethod || amount <= 0 ? ' disabled' : '') + '>Сплатити ' + fmtMoney2(amount) + '</button></div>';
+}
+
+/* ---------- Нове замовлення: від пропозиції до «Доставлено» (вигадані дані) ---------- */
+const CLIENTS = ['Інна К.', 'Максим Т.', 'Олена Д.', 'Артем Л.', 'Софія Р.', 'Денис Ж.'];
+const CLIENT_STREETS = ['вул. Лісова', 'вул. Озерна', 'просп. Миру', 'вул. Паркова', 'вул. Зарічна'];
+const DISHES = ['Бургер «Класик»', 'Картопля фрі', 'Соус сирний', 'Кола 0,5 л', 'Рол «Філадельфія»', 'Суп місо', 'Піца «Маргарита»', 'Чізкейк', 'Лате 0,3 л'];
+const MIN_PER_KM = { foot: 12, bike: 4, ebike: 3.2, scooter: 3, moto: 2.4, car: 2.6 }; // хвилин на 1 км залежно від способу доставки
+let offerTimer = null, readyTimer = null, slBlock = 0;
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const rnd = (a, b) => a + Math.random() * (b - a);
+const kmBetween = (a, b) => Math.hypot((a[0] - b[0]) * 111.32 * Math.cos(a[1] * Math.PI / 180), (a[1] - b[1]) * 110.57);
+const shift = (p, km) => {
+  const ang = Math.random() * 2 * Math.PI;
+  return [p[0] + Math.cos(ang) * km / (111.32 * Math.cos(p[1] * Math.PI / 180)), p[1] + Math.sin(ang) * km / 110.57];
+};
+const homeRoute = () => ['', '#/'].includes(location.hash);
+const renderLive = () => { if (homeRoute()) render(); }; // таймери не перемальовують інші екрани (щоб не збити форму)
+
+function newOrder() {
+  const v = pick(VENUES), cut = v.indexOf(', ');
+  const from = hereLL(), venueAt = shift(from, rnd(0.5, 1.4)), destAt = shift(venueAt, rnd(0.9, 2.2));
+  const k1 = kmBetween(from, venueAt), k2 = kmBetween(venueAt, destAt), mpk = MIN_PER_KM[state.vehicle] || 4;
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789'.split('');
+  return {
+    code: '#' + Array.from({ length: 5 }, () => pick(chars)).join(''),
+    client: pick(CLIENTS),
+    venue: { name: v.slice(0, cut), address: v.slice(cut + 2), at: venueAt },
+    dest: { address: pick(CLIENT_STREETS) + ', ' + Math.floor(rnd(1, 90)), at: destAt, instr: 'Зустрінемося біля дверей', note: 'Залиште біля дверей', landmark: 'багатоквартирний будинок', entrance: Math.floor(rnd(1, 5)), floor: Math.floor(rnd(1, 10)) },
+    items: DISHES.slice().sort(() => Math.random() - 0.5).slice(0, 3),
+    toVenue: Math.max(2, Math.round(k1 * mpk)), toClient: Math.max(2, Math.round(k2 * mpk)),
+    fee: Math.round((38 + (k1 + k2) * 14 + rnd(0, 20)) * 100) / 100,
+    phase: 'offer', ready: false, revealed: false
+  };
+}
+function setLive(L) {
+  state.live = L; state.expanded = false; state.itemsOpen = false;
+  syncRoute();
+  renderLive();
+}
+// пошук замовлень: через кілька секунд після виходу онлайн приходить нова пропозиція
+function scheduleOffer(delay) {
+  clearTimeout(offerTimer);
+  if (!state.online || state.live) return;
+  offerTimer = setTimeout(() => {
+    if (!state.online || state.live) return;
+    setLive(newOrder());
+    if (!homeRoute()) toast('Нове замовлення');
+  }, delay || rnd(5000, 9000));
+}
+const cancelOffer = () => clearTimeout(offerTimer);
+function decline() {
+  setLive(null);
+  toast('Замовлення відхилено');
+  scheduleOffer(rnd(8000, 12000));
+}
+// наступний крок: пропозиція → до закладу → у закладі → до клієнта → у клієнта → виконано
+function liveNext() {
+  const L = state.live;
+  if (!L) return;
+  if (L.phase === 'offer') { L.phase = 'to_venue'; toast('Замовлення прийнято'); }
+  else if (L.phase === 'to_venue') {
+    L.phase = 'at_venue'; L.revealed = true; // ім’я клієнта й номер відкриваються, коли курʼєр на місці
+    clearTimeout(readyTimer);
+    readyTimer = setTimeout(() => { if (state.live === L) { L.ready = true; renderLive(); } }, rnd(8000, 14000));
+  }
+  else if (L.phase === 'at_venue' && L.ready) { L.phase = 'to_client'; state.expanded = false; }
+  else if (L.phase === 'to_client') L.phase = 'at_client';
+  else if (L.phase === 'at_client') return finishOrder();
+  else return;
+  syncRoute();
+  renderLive();
+}
+function finishOrder() {
+  const L = state.live;
+  state.finance.done.push({ ts: Date.now(), code: L.code, venue: L.venue.name + ', ' + L.venue.address, amount: L.fee });
+  saveFinance();
+  setLive(null);
+  toast('Замовлення виконано');
+  scheduleOffer(rnd(8000, 12000));
+}
+
+const chev = svg('<path d="M9 5l7 7-7 7"/>');
+const slider = label =>
+  '<div class="slide"><button class="knob" data-act="slide-confirm" aria-label="Підтвердити: ' + label + '">' + ARROW + '</button>' +
+  '<span class="stxt"><b>' + label + '</b><small>Проведіть для підтвердження</small></span></div>';
+
+function itemsModal(L) {
+  return '<div class="scrim"></div><div class="isheet" role="alertdialog" aria-modal="true" aria-label="Деталі замовлення"><div class="ihead"><h2>Деталі замовлення</h2>' +
+    '<button class="tbb" data-act="items-close" aria-label="Закрити">' + svg('<path d="M6 6l12 12M18 6 6 18"/>') + '</button></div>' +
+    '<ul class="ilist">' + L.items.map(n => '<li>1 × ' + esc(n) + '</li>').join('') + '</ul>' +
+    '<button class="btn ghost round" data-act="report">Повідомити про проблему</button></div>';
+}
+
+function liveUI() {
+  const L = state.live;
+  if (L.phase === 'offer') {
+    return '<button class="decline" data-act="decline">Відхилити</button>' +
+      '<div class="ocard"><div class="orow"><span class="oi">🍴</span><div><b>' + esc(L.venue.name) + '</b><span>' + esc(L.venue.address) + '</span><small>~' + L.toVenue + ' хв</small></div></div>' +
+      '<div class="orow"><span class="oi">👤</span><div><small>~' + L.toClient + ' хв</small></div></div>' +
+      '<button class="btn round" data-act="accept">' + (L.toVenue + L.toClient) + ' хв, ' + fmtMoney2(L.fee) + '</button></div>';
+  }
+  const toClient = L.phase === 'to_client' || L.phase === 'at_client';
+  const who = '<b>' + (L.revealed ? esc(L.client) + ' ' + esc(L.code) : '***** *****') + '</b>';
+  const chips = toClient
+    ? '<span class="chip2">Доставлено через <b>' + L.toClient + ' хв</b></span>'
+    : '<span class="chip2' + (L.ready ? ' ok' : '') + '">' + (L.ready ? 'Замовлення готове до отримання' : 'Замовлення готується') + '</span>' +
+      (L.phase === 'to_venue' ? '<span class="chip2">Прибуде за <b>' + L.toVenue + ' хв</b></span>' : '<span class="chip2 ok">На місці</span>');
+  const items = '<div class="orow2">Товари (' + L.items.length + ')<button class="lnk" data-act="items-open">Переглянути' + chev + '</button></div>';
+  const help = '<div class="hcard"><b>Проблеми з доставкою?</b><button class="lnk2" data-act="help">Отримати допомогу' + chev + '</button></div>';
+  let head, details;
+  if (!toClient) {
+    head = '<b>' + esc(L.venue.name) + '</b><span>' + esc(L.venue.address) + '</span>';
+    details = '<button class="lnk call" data-act="call">Подзвонити</button><div class="blk"><div>Готові замовлення: ' + (L.ready ? 1 : 0) + '</div>' + who + items + '</div>' + help;
+  } else {
+    const d = L.dest;
+    head = who + '<span>' + esc(d.address) + '</span>';
+    details = '<div class="blk">' + who + items + '</div><dl class="info2"><dt>Адреса</dt><dd>' + esc(d.address) + '</dd><dt>Інструкції</dt><dd>' + esc(d.instr) +
+      '</dd><dt>Примітка</dt><dd>' + esc(d.note) + '</dd><dt>Орієнтир</dt><dd>' + esc(d.landmark) + '</dd><dt>Під’їзд</dt><dd>' + d.entrance + '</dd><dt>Поверх</dt><dd>' + d.floor + '</dd></dl>' +
+      '<div class="calls"><button data-act="call"><span>📞</span>Подзвонити</button><button data-act="chat"><span>💬</span>Чат</button></div>' + help;
+  }
+  let foot;
+  if (L.phase === 'to_venue') foot = slider('На місці');
+  else if (L.phase === 'at_venue') foot = L.ready ? slider('Видано') : '<p class="wait"><i class="spin"></i>Зачекайте, поки замовлення буде готове</p>';
+  else foot = slider(L.phase === 'to_client' ? 'На місці' : 'Доставлено');
+  return '<div class="osheet' + (state.expanded ? ' exp' : '') + '"><button class="grab" data-act="sheet-toggle" aria-label="Розгорнути або згорнути картку замовлення"></button>' +
+    '<div class="osum"><div class="chips">' + chips + '</div>' + head + '</div><div class="odet">' + details + '</div><div class="ofoot">' + foot + '</div></div>' +
+    (state.itemsOpen ? itemsModal(L) : '');
+}
+
+// «Великі цифри»: коли телефон повернуто на бік, ім’я клієнта й номер замовлення показуються на весь екран
+function bigDigits() {
+  const L = state.live;
+  if (!(state.landscape && L && L.revealed)) return '';
+  return '<div class="bigd" aria-label="Великі цифри"><b>' + esc(L.client) + '</b><span>' + esc(L.code.slice(1)) + '</span></div>';
+}
+
 function render() {
   const h = location.hash;
   const m = h.match(/^#\/order\/(\d+)/);
   const order = m && byId(Number(m[1]));
-  const home = !order && !['#/orders', '#/setup', '#/vehicle', '#/settings'].includes(h);
+  const home = !order && !['#/orders', '#/setup', '#/vehicle', '#/settings', '#/deliveries', '#/cash', '#/pay'].includes(h);
   if (h !== '#/vehicle') state.draft = null; else if (state.draft == null) state.draft = state.vehicle;
   if (!home) state.dialog = false;
+  if (h !== '#/menu') { state.editing = false; state.adding = false; }
+  if (h !== '#/pay') state.payMethod = null;
   document.body.classList.toggle('map-mode', home);
   document.getElementById('map').classList.toggle('off', !home);
-  root.innerHTML = order ? viewDetail(order) : h === '#/orders' ? viewList() : h === '#/setup' ? viewSetup() : h === '#/vehicle' ? viewVehicle() : h === '#/menu' ? viewHome() + viewMenu(h !== prevHash && prevHash !== '#/settings') : h === '#/settings' ? viewSettings() : viewHome();
+  root.innerHTML = order ? viewDetail(order) : h === '#/orders' ? viewList() : h === '#/setup' ? viewSetup() : h === '#/vehicle' ? viewVehicle() : h === '#/menu' ? viewHome() + viewMenu(!prevHash || prevHash === '#/') : h === '#/settings' ? viewSettings() : h === '#/deliveries' ? viewDeliveries() : h === '#/cash' ? viewCash() : h === '#/pay' ? viewPay() : viewHome();
   prevHash = h;
 }
 
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]');
   if (!b) return;
+  if (Date.now() < slBlock) return;
   const { act, id, tab } = b.dataset;
   if (act === 'tab') state.tab = tab;
   if (act === 'online') location.hash = '#/setup';
   if (act === 'offline') askOffline();
-  if (act === 'offline-yes') { state.online = false; state.dialog = false; toast('Ви офлайн'); }
+  if (act === 'offline-yes') { state.online = false; state.dialog = false; cancelOffer(); toast('Ви офлайн'); }
   if (act === 'dialog-no') state.dialog = false;
   if (act === 'soon') return toast('Розділ ще в розробці');
+  if (act === 'edit-profile') { state.editing = true; state.adding = false; }
+  if (act === 'edit-cancel') { state.editing = false; state.adding = false; }
+  if (act === 'edit-save' && !submitProfile()) return;
+  if (act === 'pick') { state.adding = false; selectProfile(Number(id)); saveProfile(); }
+  if (act === 'add-profile') state.adding = true;
+  if (act === 'del-profile') deleteProfile();
+  if (act === 'cash-done' && !saveCash()) return;
+  if (act === 'add-card') return toast('У демо-версії недоступно');
+  if (act === 'pay-now') payDebt();
+  if (act === 'accept') liveNext();
+  if (act === 'decline') decline();
+  if (act === 'slide-confirm') { if (e.detail === 0) liveNext(); else toast('Проведіть вправо, щоб підтвердити'); return; } // e.detail === 0: натискання з клавіатури
+  if (act === 'sheet-toggle') {
+    state.expanded = !state.expanded;
+    const sh = document.querySelector('.osheet');
+    if (sh) sh.classList.toggle('exp', state.expanded);
+    return;
+  }
+  if (act === 'items-open') state.itemsOpen = true;
+  if (act === 'items-close') state.itemsOpen = false;
+  if (['report', 'help', 'call', 'chat'].includes(act)) return toast('У демо-версії недоступно');
   if (act === 'locate') return recenter();
   if (act === 'check') { if (id === '2') state.checks[2].ok = !state.checks[2].ok; else startWatch(); }
-  if (act === 'confirm') { state.online = true; location.hash = '#/'; toast('Ви на лінії'); }
+  if (act === 'confirm') { state.online = true; location.hash = '#/'; toast('Ви на лінії'); scheduleOffer(); }
   if (act === 'save-vehicle') { state.vehicle = state.draft; location.hash = '#/setup'; toast('Спосіб доставки збережено'); }
   if (act === 'advance') advance(Number(id));
   if (act === 'reject') reject(Number(id));
   render();
   // після перемальовування повертаємо фокус на той самий елемент (важливо для клавіатури)
   const sel = '[data-act="' + act + '"]' + (tab ? '[data-tab="' + tab + '"]' : '') + (id ? '[data-id="' + id + '"]' : '');
-  const again = root.querySelector('[role="alertdialog"] button') || root.querySelector(sel);
+  const again = root.querySelector('[role="alertdialog"] button') || (act === 'add-profile' && root.querySelector('.pform input')) || root.querySelector(sel) || root.querySelector('.pform input') || root.querySelector('[data-act="edit-profile"]');
   if (again) again.focus();
 });
 
@@ -547,12 +1042,11 @@ document.addEventListener('change', e => {
 });
 
 document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && state.itemsOpen) { state.itemsOpen = false; render(); return; }
   if (e.key === 'Escape' && state.dialog) { state.dialog = false; render(); }
+  if (e.key === 'Escape' && state.editing) { state.editing = false; state.adding = false; render(); return; }
   if (e.key === 'Escape' && location.hash === '#/menu') location.hash = '#/';
-  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('g[role="button"]')) {
-    e.preventDefault();
-    e.target.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-  }
+  if (e.key === 'Enter' && e.target.matches('.pform input') && submitProfile()) render();
 });
 
 // вибір геолокації: точка користувача переміщується, карта центрується на ній
@@ -565,7 +1059,57 @@ document.addEventListener('change', e => {
   root.querySelector('input[name="location"]:checked').focus();
 });
 
+// повзунки підтвердження: потягни білу кнопку вправо до кінця
+let sl = null;
+document.addEventListener('pointerdown', e => {
+  const k = e.target.closest('.knob');
+  if (!k) return;
+  sl = { k, x0: e.clientX, dx: 0, max: k.parentElement.clientWidth - k.offsetWidth - 12 };
+  k.setPointerCapture(e.pointerId);
+  k.style.transition = 'none';
+});
+document.addEventListener('pointermove', e => {
+  if (!sl) return;
+  sl.dx = Math.min(sl.max, Math.max(0, e.clientX - sl.x0));
+  sl.k.style.transform = 'translateX(' + sl.dx + 'px)';
+});
+document.addEventListener('pointerup', () => {
+  if (!sl) return;
+  const { k, dx, max } = sl;
+  sl = null;
+  if (dx > 5) slBlock = Date.now() + 400; // клік після перетягування ігноруємо
+  if (dx > max * 0.8) liveNext();
+  else { k.style.transition = 'transform .2s'; k.style.transform = ''; }
+});
+document.addEventListener('pointercancel', () => { if (sl) { sl.k.style.transform = ''; sl = null; } });
+
+// вибір способу оплати
+document.addEventListener('change', e => {
+  if (!e.target.matches('input[name="pay"]')) return;
+  state.payMethod = e.target.value;
+  render();
+  root.querySelector('input[name="pay"]:checked').focus();
+});
+
+// «Налаштування»: правка заробітку й кількості замовлень за день
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (!t.matches('[data-day]')) return;
+  const n = Number(t.value);
+  if (t.value === '' || !Number.isFinite(n)) { render(); return; }
+  const day = state.finance.days[t.dataset.day] || (state.finance.days[t.dataset.day] = {});
+  if (t.dataset.field === 'count') day.count = Math.min(30, Math.max(0, Math.round(n)));
+  else day.total = Math.min(99999, Math.max(0, Math.round(n * 100) / 100));
+  t.value = day[t.dataset.field];
+  saveFinance();
+});
+
 window.addEventListener('hashchange', () => { render(); window.scrollTo(0, 0); });
+loadProfile();
+loadFinance();
+const landscapeMq = matchMedia('(orientation: landscape) and (max-height: 500px)'); // телефон на боці
+state.landscape = landscapeMq.matches;
+landscapeMq.addEventListener('change', e => { state.landscape = e.matches; renderLive(); });
 render();
 initMap();
 startWatch();
