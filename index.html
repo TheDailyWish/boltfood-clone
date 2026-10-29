@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#2B44F0">
+<meta name="theme-color" content="#EDF0F5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C111C" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -243,9 +244,13 @@ a.btn{display:block;text-align:center;text-decoration:none}
 .isheet{padding:20px 16px calc(16px + env(safe-area-inset-bottom,0px))}
 .ihead{display:flex;justify-content:space-between;align-items:center}.ihead h2{margin:0;font-size:24px}
 .ilist{list-style:none;margin:8px 0 16px;padding:0}.ilist li{padding:16px 0;border-bottom:1px solid var(--line);font-size:18px}
-.bigd{position:fixed;top:0;bottom:0;left:0;right:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0E1110;color:#EDEFEE}
-.bigd b{color:#38B27A;font-size:20vh;line-height:1.1}
-.bigd span{font-size:32vh;font-weight:800;line-height:1.05;letter-spacing:.04em}
+.bigd{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vmin;background:#0E1110;color:#EDEFEE}
+.bigd span{font-size:34vmin;font-weight:800;line-height:1;letter-spacing:.04em}
+.bigd b{color:#38B27A;font-size:20vmin;line-height:1.1}
+.bigd.rot90,.bigd.rotm90{right:auto;bottom:auto;width:100vh;height:100vw;transform-origin:0 0}
+.bigd.rot90{transform:translateX(100vw) rotate(90deg)}
+.bigd.rotm90{transform:translateY(100vh) rotate(-90deg)}
+.grab,.osum{touch-action:none}
 .pin{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:#fff;font-size:20px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 .pin.venue{background:#6B4EFF}.pin.client{background:#1E8F5A}
 
@@ -299,6 +304,8 @@ const state = {
   expanded: false,
   itemsOpen: false,
   landscape: false,
+  tilt: 0, // нахил телефона за акселерометром: 0, 90 або -90
+  orderEdit: false,
   location: null, // null — реальна геолокація, інакше id пресету
   pos: null,
   acc: null,
@@ -479,7 +486,10 @@ function syncLocateButton() {
   const b = document.querySelector('[data-act="locate"]');
   if (b) b.classList.toggle('on', isCentered());
 }
-function updateMe() { if (meMarker) meMarker.setLngLat(here()); }
+function updateMe() {
+  if (meMarker) meMarker.setLngLat(here());
+  if (state.live) syncRoute(false); // лінія маршруту рухається разом із курʼєром
+}
 function flyToMe() {
   updateMe();
   map.flyTo({ center: here(), zoom: Math.max(map.getZoom(), 14), essential: true });
@@ -511,21 +521,28 @@ function startWatch() {
 const hereLL = () => here();
 let routeMarkers = [];
 const pin = (cls, ico) => { const el = document.createElement('div'); el.className = 'pin ' + cls; el.textContent = ico; return el; };
-function syncRoute() {
-  if (!map) return;
-  if (!map.isStyleLoaded()) { map.once('idle', syncRoute); return; }
-  routeMarkers.forEach(m => m.remove());
-  routeMarkers = [];
+// точки маршруту рахуються від поточного положення курʼєра, тому лінія рухається разом із ним
+function routePoints() {
   const L = state.live;
-  const toClient = L && (L.phase === 'to_client' || L.phase === 'at_client');
-  const pts = !L ? [] : toClient ? [L.venue.at, L.dest.at] : [hereLL(), L.venue.at, L.dest.at];
+  if (!L) return [];
+  return L.phase === 'to_client' || L.phase === 'at_client' ? [hereLL(), L.dest.at] : [hereLL(), L.venue.at, L.dest.at];
+}
+function syncRoute(fit = true) {
+  if (!map) return;
+  if (!map.isStyleLoaded()) { map.once('idle', () => syncRoute(fit)); return; }
+  const pts = routePoints();
   const data = { type: 'FeatureCollection', features: pts.length ? [{ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: pts } }] : [] };
   if (map.getSource('route')) map.getSource('route').setData(data);
   else {
     map.addSource('route', { type: 'geojson', data });
     map.addLayer({ id: 'route', type: 'line', source: 'route', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#2B44F0', 'line-width': 4 } });
   }
+  if (!fit) return; // під час руху оновлюється лише лінія; мітки й масштаб змінюються при зміні етапу
+  routeMarkers.forEach(m => m.remove());
+  routeMarkers = [];
+  const L = state.live;
   if (!L) return;
+  const toClient = L.phase === 'to_client' || L.phase === 'at_client';
   if (!toClient) routeMarkers.push(new mapboxgl.Marker({ element: pin('venue', '🍴') }).setLngLat(L.venue.at).addTo(map));
   routeMarkers.push(new mapboxgl.Marker({ element: pin('client', '👤') }).setLngLat(L.dest.at).addTo(map));
   const b = new mapboxgl.LngLatBounds();
@@ -872,7 +889,7 @@ function newOrder() {
   };
 }
 function setLive(L) {
-  state.live = L; state.expanded = false; state.itemsOpen = false;
+  state.live = L; state.expanded = false; state.itemsOpen = false; state.orderEdit = false;
   syncRoute();
   renderLive();
 }
@@ -896,6 +913,7 @@ function decline() {
 function liveNext() {
   const L = state.live;
   if (!L) return;
+  state.orderEdit = false;
   if (L.phase === 'offer') { L.phase = 'to_venue'; toast('Замовлення прийнято'); }
   else if (L.phase === 'to_venue') {
     L.phase = 'at_venue'; L.revealed = true; // ім’я клієнта й номер відкриваються, коли курʼєр на місці
@@ -946,10 +964,15 @@ function liveUI() {
       (L.phase === 'to_venue' ? '<span class="chip2">Прибуде за <b>' + L.toVenue + ' хв</b></span>' : '<span class="chip2 ok">На місці</span>');
   const items = '<div class="orow2">Товари (' + L.items.length + ')<button class="lnk" data-act="items-open">Переглянути' + chev + '</button></div>';
   const help = '<div class="hcard"><b>Проблеми з доставкою?</b><button class="lnk2" data-act="help">Отримати допомогу' + chev + '</button></div>';
+  const canEdit = L.phase === 'at_venue' && L.ready; // тимчасово, для тестування
+  const editForm = '<div class="pform"><label>Ім’я клієнта<input name="oname" value="' + esc(L.client) + '" maxlength="30"></label>' +
+    '<label>Номер замовлення<input name="ocode" value="' + esc(L.code.slice(1)) + '" maxlength="8" autocapitalize="characters"></label>' +
+    '<div class="pbtns"><button class="btn ghost" data-act="order-cancel">Скасувати</button><button class="btn" data-act="order-save">Зберегти</button></div></div>';
+  const whoBlock = canEdit && state.orderEdit ? editForm : who + (canEdit ? '<button class="lnk call" data-act="order-edit">Змінити ім’я та номер (тест)</button>' : '');
   let head, details;
   if (!toClient) {
     head = '<b>' + esc(L.venue.name) + '</b><span>' + esc(L.venue.address) + '</span>';
-    details = '<button class="lnk call" data-act="call">Подзвонити</button><div class="blk"><div>Готові замовлення: ' + (L.ready ? 1 : 0) + '</div>' + who + items + '</div>' + help;
+    details = '<button class="lnk call" data-act="call">Подзвонити</button><div class="blk"><div>Готові замовлення: ' + (L.ready ? 1 : 0) + '</div>' + whoBlock + items + '</div>' + help;
   } else {
     const d = L.dest;
     head = who + '<span>' + esc(d.address) + '</span>';
@@ -962,15 +985,49 @@ function liveUI() {
   else if (L.phase === 'at_venue') foot = L.ready ? slider('Видано') : '<p class="wait"><i class="spin"></i>Зачекайте, поки замовлення буде готове</p>';
   else foot = slider(L.phase === 'to_client' ? 'На місці' : 'Доставлено');
   return '<div class="osheet' + (state.expanded ? ' exp' : '') + '"><button class="grab" data-act="sheet-toggle" aria-label="Розгорнути або згорнути картку замовлення"></button>' +
-    '<div class="osum"><div class="chips">' + chips + '</div>' + head + '</div><div class="odet">' + details + '</div><div class="ofoot">' + foot + '</div></div>' +
+    '<div class="osum" data-act="sheet-toggle"><div class="chips">' + chips + '</div>' + head + '</div><div class="odet">' + details + '</div><div class="ofoot">' + foot + '</div></div>' +
     (state.itemsOpen ? itemsModal(L) : '');
 }
 
-// «Великі цифри»: коли телефон повернуто на бік, ім’я клієнта й номер замовлення показуються на весь екран
+// «Великі цифри»: коли замовлення вже готове, але ще не видане, номер і ім’я на весь екран.
+// Працює й при вимкненому автоповороті: нахил телефона береться з акселерометра, і екран повертається програмно
 function bigDigits() {
   const L = state.live;
-  if (!(state.landscape && L && L.revealed)) return '';
-  return '<div class="bigd" aria-label="Великі цифри"><b>' + esc(L.client) + '</b><span>' + esc(L.code.slice(1)) + '</span></div>';
+  if (!(L && L.phase === 'at_venue' && L.ready)) return '';
+  if (!state.tilt && !state.landscape) return '';
+  const portrait = innerHeight >= innerWidth;
+  const rot = state.tilt && portrait ? (state.tilt > 0 ? ' rot90' : ' rotm90') : '';
+  return '<div class="bigd' + rot + '" aria-label="Великі цифри"><span>' + esc(L.code.slice(1)) + '</span><b>' + esc(L.client) + '</b></div>';
+}
+const FLIP = /iPhone|iPad|iPod/.test(navigator.userAgent) ? -1 : 1; // в iOS знак осі протилежний
+function onMotion(e) {
+  const a = e.accelerationIncludingGravity;
+  if (!a || a.x == null) return;
+  const x = a.x * FLIP;
+  const t = x > 6 ? 90 : x < -6 ? -90 : Math.abs(x) < 3 ? 0 : state.tilt; // між 3 і 6 лишаємо попереднє значення
+  if (t !== state.tilt) { state.tilt = t; renderLive(); }
+}
+let motionOn = false;
+function enableMotion(gesture) {
+  if (motionOn || !('DeviceMotionEvent' in window)) return;
+  const req = DeviceMotionEvent.requestPermission;
+  if (typeof req === 'function') {
+    if (!gesture) return; // iOS питає дозвіл лише після дотику
+    motionOn = true;
+    req.call(DeviceMotionEvent).then(r => { if (r === 'granted') window.addEventListener('devicemotion', onMotion); }).catch(() => {});
+  } else { motionOn = true; window.addEventListener('devicemotion', onMotion); }
+}
+// тимчасово, для тестування: правка імені клієнта й номера, коли замовлення вже готове
+function saveOrderEdit() {
+  const L = state.live;
+  if (!L) return false;
+  const name = document.querySelector('[name="oname"]').value.trim();
+  const code = document.querySelector('[name="ocode"]').value.trim().replace(/^#/, '').toUpperCase();
+  if (!name) { toast('Вкажіть ім’я клієнта'); return false; }
+  if (!/^[A-Z0-9]{3,8}$/.test(code)) { toast('Номер: 3–8 літер або цифр'); return false; }
+  L.client = name; L.code = '#' + code; state.orderEdit = false;
+  toast('Збережено');
+  return true;
 }
 
 function render() {
@@ -992,6 +1049,7 @@ document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]');
   if (!b) return;
   if (Date.now() < slBlock) return;
+  enableMotion(true);
   const { act, id, tab } = b.dataset;
   if (act === 'tab') state.tab = tab;
   if (act === 'online') location.hash = '#/setup';
@@ -1017,6 +1075,9 @@ document.addEventListener('click', e => {
     if (sh) sh.classList.toggle('exp', state.expanded);
     return;
   }
+  if (act === 'order-edit') { state.orderEdit = true; state.expanded = true; }
+  if (act === 'order-cancel') state.orderEdit = false;
+  if (act === 'order-save' && !saveOrderEdit()) return;
   if (act === 'items-open') state.itemsOpen = true;
   if (act === 'items-close') state.itemsOpen = false;
   if (['report', 'help', 'call', 'chat'].includes(act)) return toast('У демо-версії недоступно');
@@ -1046,6 +1107,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && state.dialog) { state.dialog = false; render(); }
   if (e.key === 'Escape' && state.editing) { state.editing = false; state.adding = false; render(); return; }
   if (e.key === 'Escape' && location.hash === '#/menu') location.hash = '#/';
+  if (e.key === 'Enter' && e.target.matches('input[name^="o"]')) { if (saveOrderEdit()) render(); return; }
   if (e.key === 'Enter' && e.target.matches('.pform input') && submitProfile()) render();
 });
 
@@ -1083,6 +1145,22 @@ document.addEventListener('pointerup', () => {
 });
 document.addEventListener('pointercancel', () => { if (sl) { sl.k.style.transform = ''; sl = null; } });
 
+// шторка: потягни за ручку чи заголовок вгору (розгорнути) або вниз (згорнути); короткий дотик перемикає її кліком
+let sd = null;
+document.addEventListener('pointerdown', e => { if (e.target.closest('.grab, .osum')) sd = { y0: e.clientY, dy: 0 }; });
+document.addEventListener('pointermove', e => { if (sd) sd.dy = e.clientY - sd.y0; });
+document.addEventListener('pointerup', () => {
+  if (!sd) return;
+  const dy = sd.dy;
+  sd = null;
+  if (Math.abs(dy) < 12) return;
+  slBlock = Date.now() + 400; // клік після жесту ігноруємо
+  state.expanded = dy < 0;
+  const sh = document.querySelector('.osheet');
+  if (sh) sh.classList.toggle('exp', state.expanded);
+});
+document.addEventListener('pointercancel', () => { sd = null; });
+
 // вибір способу оплати
 document.addEventListener('change', e => {
   if (!e.target.matches('input[name="pay"]')) return;
@@ -1110,6 +1188,7 @@ loadFinance();
 const landscapeMq = matchMedia('(orientation: landscape) and (max-height: 500px)'); // телефон на боці
 state.landscape = landscapeMq.matches;
 landscapeMq.addEventListener('change', e => { state.landscape = e.matches; renderLive(); });
+enableMotion(false);
 render();
 initMap();
 startWatch();
