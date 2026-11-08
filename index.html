@@ -692,17 +692,18 @@ function viewMenu(animate) {
 // Пресети геолокації: реальні координати пунктів у порядку [довгота, широта]
 const CITY = [28.470812, 49.232389]; // Центр: запасна точка, поки немає реальної геолокації
 const LOCATIONS = [
-  { id: 'kyivska', name: 'Київська', venue: 'Гриль 24 Київська', addr: 'район Київська', at: [28.480420, 49.237489] },
-  { id: 'center', name: 'Центр', venue: 'Гриль 24 Центр', addr: 'район Центр', at: [28.470812, 49.232389] },
-  { id: 'keltsia', name: 'Келецька', venue: 'Гриль 24 Келецька', addr: 'район Келецька', at: [28.412670, 49.226340] },
-  { id: 'khmelnytske', name: 'Хмельницьке', venue: 'Гриль 24 Хмельницьке', addr: 'район Хмельницьке', at: [28.404640, 49.237940] }
+  { id: 'kyivska', name: 'Київська', venue: "McDonald's вул. Київська", addr: 'район Київська', at: [28.480420, 49.237489] },
+  { id: 'center', name: 'Центр', venue: "McDonald's Соборна", addr: 'район Центр', at: [28.470812, 49.232389] },
+  { id: 'keltsia', name: 'Келецька', venue: "McDonald's Келецька", addr: 'район Келецька', at: [28.412670, 49.226340] },
+  { id: 'khmelnytske', name: 'Хмельницьке', venue: "McDonald's Хмельницьке шосе", addr: 'район Хмельницьке', at: [28.404640, 49.237940] }
 ];
 // де зараз курʼєр: реальна позиція, а поки її немає — центр міста
 const here = () => state.pos || CITY;
 
 function viewSettings() {
+  const currentLoc = LOCATIONS.find(l => l.id === state.location) || LOCATIONS[1];
   const opts = LOCATIONS.map(l =>
-    '<li><label class="opt"><span class="grow">' + l.name + '</span><input type="radio" name="location" value="' + l.id + '"' + (state.location === l.id ? ' checked' : '') + '></label></li>').join('');
+    '<li><label class="opt"><span class="grow">' + l.name + ' <small style="color:var(--muted)">(' + l.venue + ')</small></span><input type="radio" name="location" value="' + l.id + '"' + (state.location === l.id ? ' checked' : '') + '></label></li>').join('');
   const types = [['single', 'Одинарне'], ['double', 'Подвійне']].map(([id, label]) =>
     '<li><label class="opt"><span class="grow">' + label + '</span><input type="radio" name="otype" value="' + id + '"' + (state.orderType === id ? ' checked' : '') + '></label></li>').join('');
   const input = (d, field, attrs, value) =>
@@ -711,7 +712,7 @@ function viewSettings() {
     '<li class="dayrow"><span>' + fmtShort(d.date) + '</span>' +
     input(d, 'count', 'inputmode="numeric" min="0" max="30" step="1"', d.count) +
     input(d, 'total', 'inputmode="decimal" min="0" max="99999" step="0.01"', d.total) + '</li>').join('');
-  return topbar('#/menu', 'Назад', ARROW, 'Макдональдс') + '<ul class="opts">' + opts + '</ul>' +
+  return topbar('#/menu', 'Назад', ARROW, currentLoc.venue) + '<ul class="opts">' + opts + '</ul>' +
     '<h2 class="sec">Тип замовлення</h2><ul class="opts">' + types + '</ul>' +
     '<h2 class="sec">Заробіток за днями</h2><ul class="days"><li class="dayrow head"><span></span><span>Замовлень</span><span>Заробіток, ₴</span></li>' + rows + '</ul>';
 }
