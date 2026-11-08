@@ -692,10 +692,10 @@ function viewMenu(animate) {
 // Пресети геолокації: реальні координати пунктів у порядку [довгота, широта]
 const CITY = [28.470812, 49.232389]; // Центр: запасна точка, поки немає реальної геолокації
 const LOCATIONS = [
-  { id: 'kyivska', name: 'Київська', venue: "McDonald's вул. Київська", addr: 'вулиця Київська, 3Б, Вінниця, Вінницька область, 21000', at: [28.480420, 49.237489] },
-  { id: 'center', name: 'Центр', venue: "McDonald's Соборна", addr: 'Соборна, м. Вінниця, вул. Соборна, 51А, 21040', at: [28.470812, 49.232389] },
-  { id: 'keltsia', name: 'Келецька', venue: "McDonald's Келецька", addr: 'м. Вінниця, Келецька, 78-В', at: [28.412670, 49.226340] },
-  { id: 'khmelnytske', name: 'Хмельницьке', venue: "McDonald's Хмельницьке шосе", addr: 'м.Вінниця, вул. Хмельницьке шосе, 114-К', at: [28.404640, 49.237940] }
+  { id: 'kyivska', name: 'Київська', venue: 'Гриль 24 Київська', addr: 'район Київська', at: [28.480420, 49.237489] },
+  { id: 'center', name: 'Центр', venue: 'Гриль 24 Центр', addr: 'район Центр', at: [28.470812, 49.232389] },
+  { id: 'keltsia', name: 'Келецька', venue: 'Гриль 24 Келецька', addr: 'район Келецька', at: [28.412670, 49.226340] },
+  { id: 'khmelnytske', name: 'Хмельницьке', venue: 'Гриль 24 Хмельницьке', addr: 'район Хмельницьке', at: [28.404640, 49.237940] }
 ];
 // де зараз курʼєр: реальна позиція, а поки її немає — центр міста
 const here = () => state.pos || CITY;
@@ -738,8 +738,8 @@ const rng = seed => () => {
   t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
   return ((t ^ t >>> 14) >>> 0) / 4294967296;
 };
-// чотири заклади з пресетів: історія доставок генерується з них
-const VENUES = LOCATIONS.map(l => l.venue + ', ' + l.addr);
+// чотири заклади з пресетів: історія доставок генерується з них; показується лише назва (venue) без адреси (addr)
+const VENUES = LOCATIONS.map(l => l.venue);
 const DAY_OFFSETS = [0, 1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 15]; // 12 днів із природними пропусками
 const dayKey = d => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
 
@@ -823,7 +823,7 @@ function viewDeliveries() {
   const days = buildDays().map(d => {
     const real = state.finance.done
       .filter(o => dayKey(new Date(o.ts)) === d.key)
-      .map(o => { const t = new Date(o.ts); return { venue: o.venue, amount: o.amount, code: o.code, minutes: t.getHours() * 60 + t.getMinutes() }; })
+      .map(o => { const t = new Date(o.ts); return { venue: String(o.venue).split(', ')[0], amount: o.amount, code: o.code, minutes: t.getHours() * 60 + t.getMinutes() }; })
       .sort((a, b) => b.minutes - a.minutes);
     const orders = real.concat(dayOrders(d)); // виконані в застосунку замовлення стоять першими
     const rows = orders.map(o =>
@@ -910,7 +910,7 @@ function liveStops(L) {
 const curOf = L => (L.phase === 'to_client2' || L.phase === 'at_client2') ? L.second : L;
 const itemsFor = L => ['to_client', 'at_client', 'to_client2', 'at_client2'].includes(L.phase) ? curOf(L).items : L.items.concat(L.second ? L.second.items : []);
 function recordDelivery(c, L = state.live) {
-  state.finance.done.push({ ts: Date.now(), code: c.code, venue: L.venue.name + ', ' + L.venue.address, amount: c.fee });
+  state.finance.done.push({ ts: Date.now(), code: c.code, venue: L.venue.name, amount: c.fee });
   saveFinance();
 }
 const locLL = l => l.at || [l.lng, l.lat]; // у версії з Mapbox координати лежать в at, на схемі в lng/lat
