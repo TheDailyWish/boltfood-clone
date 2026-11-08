@@ -259,6 +259,7 @@ a.btn{display:block;text-align:center;text-decoration:none}
 .busy .spin{position:relative;width:52px;height:52px;border-width:5px}
 .pin{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:#fff;font-size:20px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 .pin.venue{background:#6B4EFF}.pin.client{background:#1E8F5A}
+.pin.t{width:46px;height:46px;font-size:13px;font-weight:700;line-height:1.05;white-space:pre;text-align:center}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -528,6 +529,15 @@ function startWatch() {
 // Маршрут замовлення на карті Mapbox: лінія курʼєр → заклад → клієнт і дві мітки
 const hereLL = () => here();
 let routeMarkers = [];
+let venueEl = null;
+// мітка закладу: після прийняття показує час до приготування (= дорога до закладу), коли замовлення готове, знову значок
+function updateVenuePin() {
+  const L = state.live;
+  if (!venueEl || !L) return;
+  const prep = ['to_venue', 'at_venue'].includes(L.phase) && !L.ready;
+  venueEl.textContent = prep ? minsLeft(L) + '\nхв' : '🍴';
+  venueEl.classList.toggle('t', prep);
+}
 const pin = (cls, ico) => { const el = document.createElement('div'); el.className = 'pin ' + cls; el.textContent = ico; return el; };
 // точки маршруту рахуються від поточного положення курʼєра, тому лінія рухається разом із ним
 function routePoints() {
@@ -552,7 +562,7 @@ function syncRoute(fit = true) {
   const L = state.live;
   if (!L) return;
   const st = liveStops(L);
-  if (st.venue) routeMarkers.push(new mapboxgl.Marker({ element: pin('venue', '🍴') }).setLngLat(st.venue).addTo(map));
+  if (st.venue) { venueEl = pin('venue', ''); routeMarkers.push(new mapboxgl.Marker({ element: venueEl }).setLngLat(st.venue).addTo(map)); updateVenuePin(); }
   st.clients.forEach(c => routeMarkers.push(new mapboxgl.Marker({ element: pin('client', '👤') }).setLngLat(c).addTo(map)));
   const b = new mapboxgl.LngLatBounds();
   pts.forEach(p => b.extend(p));
@@ -692,10 +702,10 @@ function viewMenu(animate) {
 // Пресети геолокації: реальні координати пунктів у порядку [довгота, широта]
 const CITY = [28.470812, 49.232389]; // Центр: запасна точка, поки немає реальної геолокації
 const LOCATIONS = [
-  { id: 'kyivska', name: 'Київська', venue: "McDonald's вул. Київська", addr: 'вулиця Київська, 3Б, Вінниця, Вінницька область, 21000', at: [28.480420, 49.237489] },
-  { id: 'center', name: 'Центр', venue: "McDonald's Соборна", addr: 'Соборна, м. Вінниця, вул. Соборна, 51А, 21040', at: [28.470812, 49.232389] },
-  { id: 'keltsia', name: 'Келецька', venue: "McDonald's Келецька", addr: 'м. Вінниця, Келецька, 78-В', at: [28.412670, 49.226340] },
-  { id: 'khmelnytske', name: 'Хмельницьке', venue: "McDonald's Хмельницьке шосе", addr: 'м.Вінниця, вул. Хмельницьке шосе, 114-К', at: [28.404640, 49.237940] }
+  { id: 'kyivska', name: 'Київська', venue: 'Гриль 24 Київська', addr: 'район Київська', at: [28.480420, 49.237489] },
+  { id: 'center', name: 'Центр', venue: 'Гриль 24 Центр', addr: 'район Центр', at: [28.470812, 49.232389] },
+  { id: 'keltsia', name: 'Келецька', venue: 'Гриль 24 Келецька', addr: 'район Келецька', at: [28.412670, 49.226340] },
+  { id: 'khmelnytske', name: 'Хмельницьке', venue: 'Гриль 24 Хмельницьке', addr: 'район Хмельницьке', at: [28.404640, 49.237940] }
 ];
 // де зараз курʼєр: реальна позиція, а поки її немає — центр міста
 const here = () => state.pos || CITY;
@@ -873,6 +883,16 @@ const shift = (p, km) => {
   const ang = Math.random() * 2 * Math.PI;
   return [p[0] + Math.cos(ang) * km / (111.32 * Math.cos(p[1] * Math.PI / 180)), p[1] + Math.sin(ang) * km / 110.57];
 };
+// час до приготування замовлення дорівнює дорозі до закладу; відлік іде від моменту прийняття
+const minsLeft = L => L.acceptedAt != null ? Math.max(1, Math.ceil(L.toVenue - (Date.now() - L.acceptedAt) / 60000)) : L.toVenue;
+// раз на 20 с оновлюємо відлік («Прибуде за N хв» і мітка закладу) без перемальовування екрана
+function tickPrep() {
+  const L = state.live;
+  if (!L || !['to_venue', 'at_venue'].includes(L.phase) || L.ready) return;
+  const eta = document.querySelector('[data-eta]');
+  if (eta) eta.textContent = minsLeft(L) + ' хв';
+  updateVenuePin();
+}
 const homeRoute = () => ['', '#/'].includes(location.hash);
 const renderLive = () => { if (homeRoute()) render(); }; // таймери не перемальовують інші екрани (щоб не збити форму)
 
@@ -948,6 +968,7 @@ function markReady() {
   const L = state.live;
   if (!L || L.ready || !['to_venue', 'at_venue'].includes(L.phase)) return;
   L.ready = true;
+  updateVenuePin();
   renderLive();
 }
 function decline() {
@@ -959,7 +980,7 @@ function liveNext() {
   const L = state.live;
   if (!L || state.busy) return;
   state.orderEdit = false;
-  if (L.phase === 'offer') { L.phase = 'to_venue'; toast('Замовлення прийнято'); }
+  if (L.phase === 'offer') { L.phase = 'to_venue'; L.acceptedAt = Date.now(); toast('Замовлення прийнято'); }
   else if (L.phase === 'to_venue') {
     L.phase = 'at_venue'; L.revealed = true; // ім’я клієнта й номер відкриваються, коли курʼєр на місці
   }
@@ -1022,7 +1043,7 @@ function liveUI() {
   const chips = toClient
     ? '<span class="chip2">Доставлено через <b>' + cur.toClient + ' хв</b></span>'
     : '<span class="chip2' + (L.ready ? ' ok' : ' tapx') + '"' + (L.ready ? '' : ' data-act="ready-tap"') + '>' + (L.ready ? 'Замовлення готове до отримання' : 'Замовлення готується') + '</span>' +
-      (L.phase === 'to_venue' ? '<span class="chip2">Прибуде за <b>' + L.toVenue + ' хв</b></span>' : '<span class="chip2 ok">На місці</span>');
+      (L.phase === 'to_venue' ? '<span class="chip2">Прибуде за <b data-eta>' + minsLeft(L) + ' хв</b></span>' : '<span class="chip2 ok">На місці</span>');
   const items = '<div class="orow2">Товари (' + itemsFor(L).length + ')<button class="lnk" data-act="items-open">Переглянути' + chev + '</button></div>';
   const help = '<div class="hcard"><b>Проблеми з доставкою?</b><button class="lnk2" data-act="help">Отримати допомогу' + chev + '</button></div>';
   const canEdit = L.phase === 'at_venue' && L.ready; // тимчасово, для тестування
@@ -1269,6 +1290,7 @@ const landscapeMq = matchMedia('(orientation: landscape) and (max-height: 500px)
 state.landscape = landscapeMq.matches;
 landscapeMq.addEventListener('change', e => { state.landscape = e.matches; if (!state.orderEdit) renderLive(); });
 enableMotion(false);
+setInterval(tickPrep, 20000);
 render();
 initMap();
 startWatch();
