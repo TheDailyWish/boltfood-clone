@@ -535,7 +535,8 @@ function updateVenuePin() {
   const L = state.live;
   if (!venueEl || !L) return;
   const prep = ['to_venue', 'at_venue'].includes(L.phase) && !L.ready;
-  venueEl.textContent = prep ? minsLeft(L) + '\nхв' : '🍴';
+  const v = minsLeft(L);
+  venueEl.textContent = prep ? String(v).replace('-', '−') + '\nхв' : '🍴';
   venueEl.classList.toggle('t', prep);
 }
 const pin = (cls, ico) => { const el = document.createElement('div'); el.className = 'pin ' + cls; el.textContent = ico; return el; };
@@ -884,13 +885,19 @@ const shift = (p, km) => {
   return [p[0] + Math.cos(ang) * km / (111.32 * Math.cos(p[1] * Math.PI / 180)), p[1] + Math.sin(ang) * km / 110.57];
 };
 // час до приготування замовлення дорівнює дорозі до закладу; відлік іде від моменту прийняття
-const minsLeft = L => L.acceptedAt != null ? Math.max(1, Math.ceil(L.toVenue - (Date.now() - L.acceptedAt) / 60000)) : L.toVenue;
+const minsLeft = L => {
+  if (L.acceptedAt == null) return L.toVenue;
+  const rem = L.toVenue - (Date.now() - L.acceptedAt) / 60000;
+  return rem > 0 ? Math.ceil(rem) : Math.trunc(rem); // після нуля відлік іде в мінус: на скільки фактично запізнюється замовлення
+};
+const fmtMin = n => (n < 0 ? '−' + -n : n) + ' хв';
 // раз на 20 с оновлюємо відлік («Прибуде за N хв» і мітка закладу) без перемальовування екрана
 function tickPrep() {
   const L = state.live;
   if (!L || !['to_venue', 'at_venue'].includes(L.phase) || L.ready) return;
   const eta = document.querySelector('[data-eta]');
-  if (eta) eta.textContent = minsLeft(L) + ' хв';
+  const v = minsLeft(L);
+  if (eta) eta.textContent = fmtMin(v);
   updateVenuePin();
 }
 const homeRoute = () => ['', '#/'].includes(location.hash);
@@ -1043,7 +1050,7 @@ function liveUI() {
   const chips = toClient
     ? '<span class="chip2">Доставлено через <b>' + cur.toClient + ' хв</b></span>'
     : '<span class="chip2' + (L.ready ? ' ok' : ' tapx') + '"' + (L.ready ? '' : ' data-act="ready-tap"') + '>' + (L.ready ? 'Замовлення готове до отримання' : 'Замовлення готується') + '</span>' +
-      (L.phase === 'to_venue' ? '<span class="chip2">Прибуде за <b data-eta>' + minsLeft(L) + ' хв</b></span>' : '<span class="chip2 ok">На місці</span>');
+      (L.phase === 'to_venue' ? '<span class="chip2">Прибуде за <b data-eta>' + fmtMin(minsLeft(L)) + '</b></span>' : '<span class="chip2 ok">На місці</span>');
   const items = '<div class="orow2">Товари (' + itemsFor(L).length + ')<button class="lnk" data-act="items-open">Переглянути' + chev + '</button></div>';
   const help = '<div class="hcard"><b>Проблеми з доставкою?</b><button class="lnk2" data-act="help">Отримати допомогу' + chev + '</button></div>';
   const canEdit = L.phase === 'at_venue' && L.ready; // тимчасово, для тестування
